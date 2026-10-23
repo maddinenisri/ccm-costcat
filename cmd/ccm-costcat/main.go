@@ -29,7 +29,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/mdstech/harness-ccm-costcat/internal/harness"
+	"github.com/maddinenisri/ccm-costcat/internal/harness"
 )
 
 type multiFlag []string
