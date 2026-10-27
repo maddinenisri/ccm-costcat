@@ -43,7 +43,7 @@ type common struct {
 	baseURL   string
 	outDir    string
 	outFile   string
-	format    string // raw | summary | flat | buckets | csv | all
+	format    string // raw | names | summary | flat | buckets | csv | all
 	stdout    bool
 	timeout   time.Duration
 }
@@ -62,7 +62,7 @@ func main() {
 	fs.StringVar(&c.baseURL, "base-url", envOr("HARNESS_BASE_URL", harness.DefaultBaseURL), "API base URL")
 	fs.StringVar(&c.outDir, "out-dir", "out", "output directory")
 	fs.StringVar(&c.outFile, "out", "", "explicit output file (overrides -out-dir naming; raw format only)")
-	fs.StringVar(&c.format, "format", "all", "raw | summary | flat | buckets | csv | all")
+	fs.StringVar(&c.format, "format", "all", "raw | names (UUID and name only) | summary | flat | buckets | csv | all")
 	fs.BoolVar(&c.stdout, "stdout", false, "also print pretty JSON to stdout")
 	fs.DurationVar(&c.timeout, "timeout", 2*time.Minute, "overall timeout")
 
@@ -198,6 +198,9 @@ func emitAll(c common, stem string, raw []byte, bms []harness.BusinessMapping) {
 	if want("raw") {
 		emitRaw(c, stem, raw)
 	}
+	if want("names") {
+		writeJSON(c, stem+"_names.json", harness.CategoryRefs(bms))
+	}
 	if want("summary") {
 		writeJSON(c, stem+"_summary.json", harness.SummarizeAll(bms))
 	}
@@ -319,7 +322,8 @@ Common flags:
   -api-key    (env HARNESS_API_KEY)      -account   (env HARNESS_ACCOUNT_ID)
   -base-url   (env HARNESS_BASE_URL, default `+harness.DefaultBaseURL+`)
   -out-dir    output dir (default "out") -out       explicit raw output file
-  -format     raw|summary|flat|buckets|csv|all (default all; list/get only)
+  -format     raw|names|summary|flat|buckets|csv|all (default all; list/get only)
+              names: JSON array containing only uuid and name
   -stdout     echo output to stdout      -timeout   (default 2m)
 `)
 }

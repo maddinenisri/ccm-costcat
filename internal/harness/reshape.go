@@ -12,6 +12,23 @@ import (
 	"time"
 )
 
+// ---- UUID/name view --------------------------------------------------------
+
+// CategoryRef identifies a cost category without its configuration.
+type CategoryRef struct {
+	UUID string `json:"uuid"`
+	Name string `json:"name"`
+}
+
+// CategoryRefs keeps API order and returns an empty array when no categories exist.
+func CategoryRefs(bms []BusinessMapping) []CategoryRef {
+	out := make([]CategoryRef, 0, len(bms))
+	for _, bm := range bms {
+		out = append(out, CategoryRef{UUID: bm.UUID, Name: bm.Name})
+	}
+	return out
+}
+
 // ---- Summary view ----------------------------------------------------------
 
 // CategorySummary is a compact, human-oriented view of a cost category.
